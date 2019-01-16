@@ -1,11 +1,23 @@
 const express = require("express");
+const morgan = require('morgan')
+
 const app = express();
 const bodyParser = require("body-parser");
-const PORT = 8080; // default port 8080
+const PORT = 3000; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(morgan('dev'));
 
+// Unique ID 
+let generateRandomString = () => {
+  let uid = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < 6; i++)
+    uid += possible.charAt(Math.floor(Math.random() * possible.length));
+    return uid;
+}
 
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -42,15 +54,24 @@ app.get("/urls/:id", (req, res) => {
 })
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  let longURL = req.body.longURL
+  let shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL
+  res.redirect(`/urls/${shortURL}`)
+
+  // console.log('longURL', longURL);
+  // console.log('shortURL', shortURL);
+  // console.log('DB ', urlDatabase);
 })
 
-
-
-
-
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL]
+  console.log('LONGURL: ', longURL);
+  res.redirect(longURL);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
