@@ -11,5 +11,11 @@
     <ul>
       <li><%= urls[shortURL] %> - <%= shortURL  %></li>
     </ul>
+    <form method="POST" action=<%= `/urls/${shortURL}` %>>
+      <input type=text name='urlEdit' value=<%=`${urls[shortURL]}`%> placeholder='...' />
+      <button type="submit">Edit URL</button>
+    </form>
   </body>
 </html>
+
+
