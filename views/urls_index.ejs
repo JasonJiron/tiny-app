@@ -9,10 +9,16 @@
         <% include ../partials/_header %>
     </header>
     <ul>
+
       <% for (key in urls) { %>
         <li><%= key %> - <%= urls[key] %></li>
+        <%= console.log('VALS ', key, urls[key]) %>
+        <form method="POST" action=<%=`/urls/${key}/delete`%>>
+          <button type="submit">Delete</button>
+        </form>
       <% } %> </br>
-      <a href='#'> It's 2019, shorten that URL up.</a>
+
+      <a href='#'> It's 2019, shorten that URL up.</a> 
     </ul>
   </body>
 </html>
