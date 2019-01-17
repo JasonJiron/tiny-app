@@ -21,22 +21,36 @@ let generateRandomString = () => {
     return uid;
 }
 
-let urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase)
-});
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
+// });
+
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase)
+// });
+
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 app.get("/urls", (req, res) => {
   let templateVars = { 
@@ -87,16 +101,34 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  username = req.body.username
+  let username = req.body.username
   res.cookie('username', username)
   res.redirect('/urls')
 });
 
 app.post("/logout", (req, res) => {
-  username = req.body.username
+  let username = req.body.username
   res.clearCookie('username')
   res.redirect('/urls')
 })
+
+app.get('/register', (req, res) => {
+  res.render("urls_register")
+})
+
+app.post('/register', (req, res) => {
+  let email = req.body.email
+  let password = req.body.password
+  let id = generateRandomString()
+  users[id] = { 
+    id: id, 
+    email: email, 
+    password: password 
+  }
+  res.cookie('user_id', id)
+  res.redirect('/urls')
+})
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

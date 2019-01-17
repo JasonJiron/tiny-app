@@ -2,11 +2,11 @@
 
 <% if(username){ %>
   <h2> <%= username %> </h2>
-  <form method="POST" action=<%= `/logout` %>>
+  <form method="POST" action="/logout">
     <button type="submit">Logout</button>   
   </form>
 <% } else { %>  
-  <form method="POST" action=<%= `/login` %>>
+  <form method="POST" action="/login">
     <input type=text name='username' placeholder="Yo, login">>
     <button type="submit">Sign in</button> 
   </form>
