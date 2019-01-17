@@ -1,1 +1,17 @@
 <h1>This is my header</h1>
+
+<% if(username){ %>
+  <h2> <%= username %> </h2>
+  <form method="POST" action=<%= `/logout` %>>
+    <button type="submit">Logout</button>   
+  </form>
+<% } else { %>  
+  <form method="POST" action=<%= `/login` %>>
+    <input type=text name='username' placeholder="Yo, login">>
+    <button type="submit">Sign in</button> 
+  </form>
+<% } %>
+
+
+
+ 
