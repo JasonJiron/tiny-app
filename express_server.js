@@ -39,6 +39,9 @@ const users = {
   }
 }
 
+// users[email]
+// users[userID].email
+
 
 // app.get("/", (req, res) => {
 //   res.send("Hello!");
@@ -119,7 +122,20 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   let email = req.body.email
   let password = req.body.password
-  let id = generateRandomString()
+  let id = generateRandomString();
+  if (!email || !password) {
+    res.status(400)
+    console.log(res.status);
+    res.redirect('/register')
+  } 
+  for (key in users) {
+    let userInfo = users[key]
+    if (email === userInfo.email) {
+      res.status(400)
+      res.redirect('/register')
+      return // ends the function if the email is a dupe
+    } 
+  }
   users[id] = { 
     id: id, 
     email: email, 
@@ -127,6 +143,7 @@ app.post('/register', (req, res) => {
   }
   res.cookie('user_id', id)
   res.redirect('/urls')
+  console.log(users);
 })
 
 
@@ -135,3 +152,13 @@ app.listen(PORT, () => {
 });
 
 
+// for (key in users) {
+  // key = "userRandomID"
+  // let userInfo = users[key]
+  // if (userInfo.email === email)
+// }
+
+
+// userInfo.email ==> 'user@exmaple.com'
+// userInfo[email] ==> 
+// userInfo['email'] ==>
