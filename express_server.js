@@ -108,21 +108,28 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  // let username = req.body.username
-  // res.cookie('username', username)
   let userEmail = req.body.email
   let userPassword = req.body.password
 
+  for (var key in users) {
+    let userInfo = users[key]
+    if (userEmail !== userInfo.email) {
+      res.status(403)
+    }
+    // else if ()
+  }
+// In order to do this, the endpoint will first need to try 
+// and find a user that matches the email submitted via the login 
+// form. If a user with that e-mail cannot be found, return a response 
+// with a 403 status code.
 
+// If a user with that e-mail address is located, compare the 
+// password given in the form with the existing user's password. 
+// If it does not match, return a response 
+// with a 403 status code.
 
-
-
-
-
-
-
-
-
+// If both checks pass, set the user_id cookie with the matching user's 
+// random ID, then redirect to /.
 
 
   res.cookie('user_id', user_id)   
