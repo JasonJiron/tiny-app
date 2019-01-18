@@ -108,15 +108,31 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let username = req.body.username
-  res.cookie('username', username)
+  // let username = req.body.username
+  // res.cookie('username', username)
+  let userEmail = req.body.email
+  let userPassword = req.body.password
+
+
+
+
+
+
+
+
+
+
+
+
+
+  res.cookie('user_id', user_id)   
   res.redirect('/urls')
 });
 
 app.post("/logout", (req, res) => {
   let username = req.body.username
   res.clearCookie('user_id')
-  res.redirect('/register')
+  res.redirect('/login')
 })
 
 app.get('/register', (req, res) => {
@@ -150,19 +166,10 @@ app.post('/register', (req, res) => {
   console.log(users);
 })
 
+app.get('/login', (req, res) => {
+  res.render("urls_login")
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-// for (key in users) {
-  // key = "userRandomID"
-  // let userInfo = users[key]
-  // if (userInfo.email === email)
-// }
-
-
-// userInfo.email ==> 'user@exmaple.com'
-// userInfo[email] ==> 
-// userInfo['email'] ==>
