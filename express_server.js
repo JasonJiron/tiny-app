@@ -43,9 +43,9 @@ const users = {
 // users[userID].email
 
 
-// app.get("/", (req, res) => {
-//   res.send("Hello!");
-// });
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
 
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase)
@@ -151,12 +151,13 @@ app.get('/login', (req, res) => {
 app.post("/login", (req, res) => {
   let userEmail = req.body.email
   let userPassword = req.body.password
-
+  // let found = false;
   for (let key in users) {
     let userInfo = users[key]
     if ((userEmail === userInfo.email) && (userPassword === userInfo.password)) {
       res.cookie('user_id', userInfo.id)   
-      res.redirect('/urls')
+      res.redirect('/')
+      return
     }
   }
   res.status(403)
