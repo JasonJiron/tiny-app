@@ -107,35 +107,6 @@ app.post("/urls/:id", (req, res) => {
   res.redirect('/urls')
 });
 
-app.post("/login", (req, res) => {
-  let userEmail = req.body.email
-  let userPassword = req.body.password
-
-  for (var key in users) {
-    let userInfo = users[key]
-    if (userEmail !== userInfo.email) {
-      res.status(403)
-    }
-    // else if ()
-  }
-// In order to do this, the endpoint will first need to try 
-// and find a user that matches the email submitted via the login 
-// form. If a user with that e-mail cannot be found, return a response 
-// with a 403 status code.
-
-// If a user with that e-mail address is located, compare the 
-// password given in the form with the existing user's password. 
-// If it does not match, return a response 
-// with a 403 status code.
-
-// If both checks pass, set the user_id cookie with the matching user's 
-// random ID, then redirect to /.
-
-
-  res.cookie('user_id', user_id)   
-  res.redirect('/urls')
-});
-
 app.post("/logout", (req, res) => {
   let username = req.body.username
   res.clearCookie('user_id')
@@ -177,6 +148,45 @@ app.get('/login', (req, res) => {
   res.render("urls_login")
 })
 
+app.post("/login", (req, res) => {
+  let userEmail = req.body.email
+  let userPassword = req.body.password
+
+  for (let key in users) {
+    let userInfo = users[key]
+    if (userEmail === userInfo.email) {
+      console.log('USERINFO-inside if: ', userInfo);
+      res.cookie('user_id', userInfo.id)   
+      res.redirect('/urls')
+    }
+  }
+  res.status(403)
+  res.redirect('/register')
+})
+
+
+// In order to do this, the endpoint will first need to try 
+// and find a user that matches the email submitted via the login 
+// form. If a user with that e-mail cannot be found, return a response 
+// with a 403 status code.
+
+// If a user with that e-mail address is located, compare the 
+// password given in the form with the existing user's password. 
+// If it does not match, return a response 
+// with a 403 status code.
+
+// If both checks pass, set the user_id cookie with the matching user's 
+// random ID, then redirect to /.
+
+
+  // res.cookie('user_id', user_id)   
+  // res.redirect('/urls')
+// });
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+  //   res.cookie('user_id', user_id)   
+  //   res.redirect('/urls')
