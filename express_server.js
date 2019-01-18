@@ -154,8 +154,7 @@ app.post("/login", (req, res) => {
 
   for (let key in users) {
     let userInfo = users[key]
-    if (userEmail === userInfo.email) {
-      console.log('USERINFO-inside if: ', userInfo);
+    if ((userEmail === userInfo.email) && (userPassword === userInfo.password)) {
       res.cookie('user_id', userInfo.id)   
       res.redirect('/urls')
     }
