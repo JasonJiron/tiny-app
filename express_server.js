@@ -15,7 +15,6 @@ app.use(cookieParser());
 let generateRandomString = () => {
   let uid = "";
   let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
   for (let i = 0; i < 6; i++)
     uid += possible.charAt(Math.floor(Math.random() * possible.length));
     return uid;
@@ -99,7 +98,6 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let user_id = req.cookies['user_id']
-  let templateVars = { username: users[user_id].email }
   let longURL = req.body.longURL
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {
@@ -117,20 +115,23 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   let user_id = req.cookies['user_id']
-  let templateVars = { username: users[user_id].email }
   let shortURL = req.params.id
-  // if the user_id === the userID in the Obj
-
-
-  delete urlDatabase[shortURL]
-  res.redirect('/urls')
+  if (user_id === urlDatabase[shortURL].userID) {
+    delete urlDatabase[shortURL]
+    res.redirect('/urls')
+  } 
+  res.send('Only the can delete')
 });
 
 app.post("/urls/:id", (req, res) => {
+  let user_id = req.cookies['user_id']
   let urlToEdit = req.params.id
-  urlDatabase[urlToEdit].longURL = req.body.urlEdit
-  res.redirect('/urls')
-
+  let shortURL = req.params.id
+  if (user_id === urlDatabase[shortURL].userID) {
+    urlDatabase[urlToEdit].longURL = req.body.urlEdit
+    res.redirect('/urls')
+  }
+  res.send('Login, dude')
 });
 
 app.post("/logout", (req, res) => {
@@ -158,9 +159,9 @@ app.post('/register', (req, res) => {
       res.status(400)
       res.redirect('/register')
       return // ends the function if the email is a dupe
-    } 
+    }
   }
-  users[id] = { 
+  users[id] = {
     id: id, 
     email: email, 
     password: password 
@@ -189,7 +190,6 @@ app.post("/login", (req, res) => {
   res.status(403)
   res.redirect('/register')
 })
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
