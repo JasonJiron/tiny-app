@@ -22,8 +22,16 @@ let generateRandomString = () => {
 }
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    shortURL: "b2xVn2",
+    longURL: "http://www.lighthouselabs.ca",
+    userID: '1a2b3c'
+  },
+  "9sm5xK": {
+    shortURL:"9sm5xK",
+    longURL:"http://www.google.com",
+    userID: '4d5e6f'
+  } 
 };
 
 const users = { 
@@ -53,8 +61,15 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let user_id = req.cookies['user_id']
+  let usersURLs = {}
+  for (let key in urlDatabase) {
+    let user = urlDatabase[key].userID
+    if (user_id === user) {
+      usersURLs[urlDatabase[key].shortURL] = urlDatabase[key].longURL
+    }
+  }
   let templateVars = { 
-    urls: urlDatabase,
+    urls: usersURLs,
     username: user_id ? users[user_id].email : null
    }
   res.render("urls_index", templateVars)
@@ -72,21 +87,11 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars)
 });
 
-
-// if the user is registered and logged in, they can edit.
-// if the user is not registered and/or logged in, redirect
-// to '/login'
-
-
-
-
-
-
 app.get("/urls/:id", (req, res) => {
   let user_id = req.cookies['user_id']
   let templateVars = { 
     shortURL: req.params.id,
-    urls: urlDatabase,
+    url: urlDatabase[req.params.id],
     username: users[user_id].email
    } 
   res.render("urls_show", templateVars)
@@ -97,7 +102,11 @@ app.post("/urls", (req, res) => {
   let templateVars = { username: users[user_id].email }
   let longURL = req.body.longURL
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL
+  urlDatabase[shortURL] = {
+    shortURL,    
+    longURL,
+    userID: user_id
+  }
   res.redirect(`/urls/${shortURL}`)
 });
 
@@ -110,18 +119,22 @@ app.post("/urls/:id/delete", (req, res) => {
   let user_id = req.cookies['user_id']
   let templateVars = { username: users[user_id].email }
   let shortURL = req.params.id
+  // if the user_id === the userID in the Obj
+
+
   delete urlDatabase[shortURL]
   res.redirect('/urls')
 });
 
 app.post("/urls/:id", (req, res) => {
   let urlToEdit = req.params.id
-  urlDatabase[urlToEdit] = req.body.urlEdit
+  urlDatabase[urlToEdit].longURL = req.body.urlEdit
   res.redirect('/urls')
+
 });
 
 app.post("/logout", (req, res) => {
-  // let username = req.body.username
+  let username = req.body.username
   res.clearCookie('user_id')
   res.redirect('/login')
 })
@@ -136,12 +149,12 @@ app.post('/register', (req, res) => {
   let id = generateRandomString();
   if (!email || !password) {
     res.status(400)
-    console.log(res.status);
     res.redirect('/register')
   } 
   for (key in users) {
     let userInfo = users[key]
     if (email === userInfo.email) {
+      console.log('USER OBJ: ', users);
       res.status(400)
       res.redirect('/register')
       return // ends the function if the email is a dupe
@@ -167,6 +180,7 @@ app.post("/login", (req, res) => {
   for (let key in users) {
     let userInfo = users[key]
     if ((userEmail === userInfo.email) && (userPassword === userInfo.password)) {
+      console.log('USER OBJ2: ', users);      
       res.cookie('user_id', userInfo.id)   
       res.redirect('/')
       return // ending the if block and runs 'status(403)' logic
@@ -176,24 +190,6 @@ app.post("/login", (req, res) => {
   res.redirect('/register')
 })
 
-
-// In order to do this, the endpoint will first need to try 
-// and find a user that matches the email submitted via the login 
-// form. If a user with that e-mail cannot be found, return a response 
-// with a 403 status code.
-
-// If a user with that e-mail address is located, compare the 
-// password given in the form with the existing user's password. 
-// If it does not match, return a response 
-// with a 403 status code.
-
-// If both checks pass, set the user_id cookie with the matching user's 
-// random ID, then redirect to /.
-
-
-  // res.cookie('user_id', user_id)   
-  // res.redirect('/urls')
-// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
