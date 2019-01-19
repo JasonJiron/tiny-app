@@ -1,17 +1,23 @@
-const express      = require("express");
-const morgan       = require('morgan');
-const cookieParser = require('cookie-parser');
-const bcrypt       = require('bcrypt');
-const saltRounds   = 10;
+const express       = require("express");
+const morgan        = require('morgan');
+const cookieParser  = require('cookie-parser');
+const cookieSession = require('cookie-session')
+const bcrypt        = require('bcrypt');
+const saltRounds    = 10;
 
-const app          = express();
-const bodyParser   = require("body-parser");
-const PORT         = 3000;
+const app           = express();
+const bodyParser    = require("body-parser");
+const PORT          = 3000;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['tiny-app'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 // Unique ID 
 let generateRandomString = () => {
@@ -35,7 +41,6 @@ const urlDatabase = {
   } 
 };
 
-
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -50,7 +55,7 @@ const users = {
 }
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send('<h2>Hello</h2>');
 });
 
 // app.get("/urls.json", (req, res) => {
@@ -62,7 +67,7 @@ app.get("/", (req, res) => {
 // });
 
 app.get("/urls", (req, res) => {
-  let user_id = req.cookies['user_id']
+  let user_id = req.session.user_id
   let usersURLs = {}
   for (let key in urlDatabase) {
     let user = urlDatabase[key].userID
@@ -78,7 +83,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  let user_id = req.cookies['user_id']
+  let user_id = req.session.user_id
   if (!user_id) {
     res.redirect('/login')
   }
@@ -90,7 +95,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let user_id = req.cookies['user_id']
+  let user_id = req.session.user_id
   let templateVars = { 
     shortURL: req.params.id,
     url: urlDatabase[req.params.id],
@@ -100,7 +105,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  let user_id = req.cookies['user_id']
+  let user_id = req.session.user_id
   let longURL = req.body.longURL
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {
@@ -118,7 +123,7 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  let user_id = req.cookies['user_id']
+  let user_id = req.session.user_id
   let shortURL = req.params.id
   if (user_id === urlDatabase[shortURL].userID) {
     delete urlDatabase[shortURL]
@@ -128,7 +133,8 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  let user_id = req.cookies['user_id']
+  // let user_id = req.cookies['user_id']
+  let user_id = req.session.user_id
   let urlToEdit = req.params.id
   let shortURL = req.params.id
   if (user_id === urlDatabase[shortURL].userID) {
@@ -139,8 +145,8 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  let username = req.body.username
-  res.clearCookie('user_id')
+  // let username = req.body.username
+  req.session.user_id = null
   res.redirect('/login')
 })
 
@@ -160,7 +166,6 @@ app.post('/register', (req, res) => {
   for (key in users) {
     let userInfo = users[key]
     if (email === userInfo.email) {
-      console.log('USER OBJ: ', users);
       res.status(400)
       res.redirect('/register')
       return // ends the function if the email is a dupe
@@ -171,9 +176,8 @@ app.post('/register', (req, res) => {
     email: email, 
     password: hashedPassword 
   }
-  res.cookie('user_id', id)
+  req.session.user_id = id
   res.redirect('/urls')
-  console.log(users);
 })
 
 app.get('/login', (req, res) => {
@@ -186,11 +190,8 @@ app.post("/login", (req, res) => {
   for (let key in users) {
     let userInfo = users[key]
     if ((userEmail === userInfo.email) && (bcrypt.compareSync(userPassword, userInfo.password))) {
-      console.log('USER OBJ2: ', users);      
-      res.cookie('user_id', userInfo.id)   
+      req.session.user_id = userInfo.id
       res.redirect('/')
-      console.log('USER_PW: ', userPassword);
-      console.log('USER.INFO ', userInfo.password);
       return // ending the if block and runs 'status(403)' logic
     }
   }
@@ -199,6 +200,5 @@ app.post("/login", (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tiny-app listening on port ${PORT}!`);
 });
-

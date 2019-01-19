@@ -15,6 +15,8 @@
     <form method="POST" action=<%= `/urls/${shortURL}` %>>
     <input style="width: 175px" type=text name='urlEdit' value=<%=`${url.longURL}`%> />
       <button type="submit">Edit URL</button>
+      <a type="submit" href="/urls/new">New URL</a>
+
     </form>
   </body>
 </html>

@@ -1,13 +1,16 @@
-<h1>This is my header</h1>
+<h1>Tiny URL App</h1>
 
 <% if(username){ %>
-  <h2> <%= username %> </h2>
-  <form method="POST" action="/logout">
-    <button type="submit">Logout</button>
-  </form>
+  <h2> Sup,  <%= username %> </h2>
+  <table>
+    <form method="POST" action="/logout">
+      <button type="submit">Logout</button>
+    </form>
+  </table>
+
 <% } else { %>  
-  <a href="/login">Login</a></br>
-  <a href="/register">Register</a>
+    <a href="/login" >Login</a></br>
+    <a href="/register">Register</a>
 <% } %>
 
 
