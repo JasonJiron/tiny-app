@@ -1,10 +1,12 @@
-const express = require("express");
-const morgan = require('morgan');
+const express      = require("express");
+const morgan       = require('morgan');
 const cookieParser = require('cookie-parser');
+const bcrypt       = require('bcrypt');
+const saltRounds   = 10;
 
-const app = express();
-const bodyParser = require("body-parser");
-const PORT = 3000; // default port 8080
+const app          = express();
+const bodyParser   = require("body-parser");
+const PORT         = 3000;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -149,6 +151,7 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   let email = req.body.email
   let password = req.body.password
+  let hashedPassword = bcrypt.hashSync(password, saltRounds);
   let id = generateRandomString();
   if (!email || !password) {
     res.status(400)
@@ -166,7 +169,7 @@ app.post('/register', (req, res) => {
   users[id] = {
     id: id, 
     email: email, 
-    password: password 
+    password: hashedPassword 
   }
   res.cookie('user_id', id)
   res.redirect('/urls')
@@ -182,10 +185,12 @@ app.post("/login", (req, res) => {
   let userPassword = req.body.password
   for (let key in users) {
     let userInfo = users[key]
-    if ((userEmail === userInfo.email) && (userPassword === userInfo.password)) {
+    if ((userEmail === userInfo.email) && (bcrypt.compareSync(userPassword, userInfo.password))) {
       console.log('USER OBJ2: ', users);      
       res.cookie('user_id', userInfo.id)   
       res.redirect('/')
+      console.log('USER_PW: ', userPassword);
+      console.log('USER.INFO ', userInfo.password);
       return // ending the if block and runs 'status(403)' logic
     }
   }
@@ -196,5 +201,4 @@ app.post("/login", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
 
