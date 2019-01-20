@@ -17,7 +17,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['tiny-app'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
+}));
 
 // Unique ID 
 let generateRandomString = () => {
@@ -26,7 +26,7 @@ let generateRandomString = () => {
   for (let i = 0; i < 6; i++)
     uid += possible.charAt(Math.floor(Math.random() * possible.length));
     return uid;
-}
+};
 
 const urlDatabase = {
   "b2xVn2": {
@@ -138,11 +138,11 @@ app.post("/urls/:id", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session.user_id = null
   res.redirect('/login')
-})
+});
 
 app.get('/register', (req, res) => {
   res.render("urls_register")
-})
+});
 
 app.post('/register', (req, res) => {
   let email = req.body.email
@@ -168,11 +168,11 @@ app.post('/register', (req, res) => {
   }
   req.session.user_id = id
   res.redirect('/urls')
-})
+});
 
 app.get('/login', (req, res) => {
   res.render("urls_login")
-})
+});
 
 app.post("/login", (req, res) => {
   let userEmail = req.body.email
@@ -187,7 +187,7 @@ app.post("/login", (req, res) => {
   }
   res.status(403)
   res.redirect('/register')
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Tiny-app listening on port ${PORT}!`);
