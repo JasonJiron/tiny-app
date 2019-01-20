@@ -58,14 +58,6 @@ app.get("/", (req, res) => {
   res.send('<h2>Hello</h2>');
 });
 
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase)
-// });
-
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-
 app.get("/urls", (req, res) => {
   let user_id = req.session.user_id
   let usersURLs = {}
@@ -133,7 +125,6 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  // let user_id = req.cookies['user_id']
   let user_id = req.session.user_id
   let urlToEdit = req.params.id
   let shortURL = req.params.id
@@ -145,7 +136,6 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  // let username = req.body.username
   req.session.user_id = null
   res.redirect('/login')
 })

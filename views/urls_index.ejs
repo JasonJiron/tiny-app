@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>TinyApp</title>
-  </head>
-  <body>
-    <header>
-        <% include ../partials/_header %>
-    </header>
-
-    <ul>
-      <% for (let key in urls) { %>
-        <li><%= key %> - <%= urls[key] %></li>
-        <a href=<%= `/urls/${key}`%>>Edit</a>
-        <form method="POST" action=<%=`/urls/${key}/delete`%>>
-          <button type="submit">Delete</button>
-        </form>
-      <% } %> </br>
-      <a href='/urls/new'> New URL</a> 
-    </ul>
-  </body>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>TinyApp</title>
+</head>
+<body>
+  <header>
+    <% include ../partials/_header %>
+  </header>
+  <ul>
+    <% for (let key in urls) { %>
+      <li><%= key %> - <%= urls[key] %></li>
+      <a href=<%= `/urls/${key}`%>>Edit</a>
+      <form method="POST" action=<%=`/urls/${key}/delete`%>>
+        <button type="submit">Delete</button>
+      </form>
+    <% } %> </br>
+    <a href='/urls/new'>New URL</a> 
+  </ul>
+</body>
 </html>
 
 
